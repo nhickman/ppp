@@ -48,9 +48,8 @@ int chap_mdtype_all = MDTYPE_ALL;
 
 /* Hook for a plugin to validate CHAP challenge */
 int (*chap_verify_hook)(char *name, char *ourname, int id,
-			struct chap_digest_type *digest,
-			unsigned char *challenge, unsigned char *response,
-			char *message, int message_space) = NULL;
+		struct chap_digest_type *digest, unsigned char *challenge,
+		unsigned char *response, char *message, int message_space) = NULL;
 
 /*
  * Option variables.
@@ -62,15 +61,12 @@ int chap_rechallenge_time = 0;
 /*
  * Command-line options.
  */
-static option_t chap_option_list[] = {
-	{ "chap-restart", o_int, &chap_timeout_time,
-	  "Set timeout for CHAP", OPT_PRIO },
-	{ "chap-max-challenge", o_int, &chap_max_transmits,
-	  "Set max #xmits for challenge", OPT_PRIO },
-	{ "chap-interval", o_int, &chap_rechallenge_time,
-	  "Set interval for rechallenge", OPT_PRIO },
-	{ NULL }
-};
+static option_t chap_option_list[] = { { "chap-restart", o_int,
+		&chap_timeout_time, "Set timeout for CHAP", OPT_PRIO }, {
+		"chap-max-challenge", o_int, &chap_max_transmits,
+		"Set max #xmits for challenge", OPT_PRIO }, { "chap-interval", o_int,
+		&chap_rechallenge_time, "Set interval for rechallenge", OPT_PRIO }, {
+		NULL } };
 
 /*
  * Internal state.
@@ -79,7 +75,7 @@ static struct chap_client_state {
 	int flags;
 	char *name;
 	struct chap_digest_type *digest;
-	unsigned char priv[64];		/* private area for digest's use */
+	unsigned char priv[64]; /* private area for digest's use */
 } client;
 
 /*
@@ -119,9 +115,8 @@ static void chap_generate_challenge(struct chap_server_state *ss);
 static void chap_handle_response(struct chap_server_state *ss, int code,
 		unsigned char *pkt, int len);
 static int chap_verify_response(char *name, char *ourname, int id,
-		struct chap_digest_type *digest,
-		unsigned char *challenge, unsigned char *response,
-		char *message, int message_space);
+		struct chap_digest_type *digest, unsigned char *challenge,
+		unsigned char *response, char *message, int message_space);
 static void chap_respond(struct chap_client_state *cs, int id,
 		unsigned char *pkt, int len);
 static void chap_handle_status(struct chap_client_state *cs, int code, int id,
@@ -137,9 +132,7 @@ static struct chap_digest_type *chap_digests;
 /*
  * chap_init - reset to initial state.
  */
-static void
-chap_init(int unit)
-{
+static void chap_init(int unit) {
 	memset(&client, 0, sizeof(client));
 	memset(&server, 0, sizeof(server));
 
@@ -152,9 +145,7 @@ chap_init(int unit)
 /*
  * Add a new digest type to the list.
  */
-void
-chap_register_digest(struct chap_digest_type *dp)
-{
+void chap_register_digest(struct chap_digest_type *dp) {
 	dp->next = chap_digests;
 	chap_digests = dp;
 }
@@ -162,9 +153,7 @@ chap_register_digest(struct chap_digest_type *dp)
 /*
  * chap_lowerup - we can start doing stuff now.
  */
-static void
-chap_lowerup(int unit)
-{
+static void chap_lowerup(int unit) {
 	struct chap_client_state *cs = &client;
 	struct chap_server_state *ss = &server;
 
@@ -174,9 +163,7 @@ chap_lowerup(int unit)
 		chap_timeout(ss);
 }
 
-static void
-chap_lowerdown(int unit)
-{
+static void chap_lowerdown(int unit) {
 	struct chap_client_state *cs = &client;
 	struct chap_server_state *ss = &server;
 
@@ -191,9 +178,7 @@ chap_lowerdown(int unit)
  * If the lower layer is already up, we start sending challenges,
  * otherwise we wait for the lower layer to come up.
  */
-void
-chap_auth_peer(int unit, char *our_name, int digest_code)
-{
+void chap_auth_peer(int unit, char *our_name, int digest_code) {
 	struct chap_server_state *ss = &server;
 	struct chap_digest_type *dp;
 
@@ -205,13 +190,12 @@ chap_auth_peer(int unit, char *our_name, int digest_code)
 		if (dp->code == digest_code)
 			break;
 	if (dp == NULL)
-		fatal("CHAP digest 0x%x requested but not available",
-		      digest_code);
+		fatal("CHAP digest 0x%x requested but not available", digest_code);
 
 	ss->digest = dp;
 	ss->name = our_name;
 	/* Start with a random ID value */
-	ss->id = (unsigned char)(drand48() * 256);
+	ss->id = (unsigned char) (drand48() * 256);
 	ss->flags |= AUTH_STARTED;
 	if (ss->flags & LOWERUP)
 		chap_timeout(ss);
@@ -221,9 +205,7 @@ chap_auth_peer(int unit, char *our_name, int digest_code)
  * chap_auth_with_peer - Prepare to authenticate ourselves to the peer.
  * There isn't much to do until we receive a challenge.
  */
-void
-chap_auth_with_peer(int unit, char *our_name, int digest_code)
-{
+void chap_auth_with_peer(int unit, char *our_name, int digest_code) {
 	struct chap_client_state *cs = &client;
 	struct chap_digest_type *dp;
 
@@ -235,8 +217,7 @@ chap_auth_with_peer(int unit, char *our_name, int digest_code)
 		if (dp->code == digest_code)
 			break;
 	if (dp == NULL)
-		fatal("CHAP digest 0x%x requested but not available",
-		      digest_code);
+		fatal("CHAP digest 0x%x requested but not available", digest_code);
 
 	cs->digest = dp;
 	cs->name = our_name;
@@ -248,9 +229,7 @@ chap_auth_with_peer(int unit, char *our_name, int digest_code)
  * This could be either a retransmission of a previous challenge,
  * or a new challenge to start re-authentication.
  */
-static void
-chap_timeout(void *arg)
-{
+static void chap_timeout(void *arg) {
 	struct chap_server_state *ss = arg;
 
 	ss->flags &= ~TIMEOUT_PENDING;
@@ -275,9 +254,7 @@ chap_timeout(void *arg)
  * chap_generate_challenge - generate a challenge string and format
  * the challenge packet in ss->challenge_pkt.
  */
-static void
-chap_generate_challenge(struct chap_server_state *ss)
-{
+static void chap_generate_challenge(struct chap_server_state *ss) {
 	int clen = 1, nlen, len;
 	unsigned char *p;
 
@@ -302,26 +279,24 @@ chap_generate_challenge(struct chap_server_state *ss)
 /*
  * chap_handle_response - check the response to our challenge.
  */
-static void
-chap_handle_response(struct chap_server_state *ss, int id,
-		     unsigned char *pkt, int len)
-{
+static void chap_handle_response(struct chap_server_state *ss, int id,
+		unsigned char *pkt, int len) {
 	int response_len, ok, mlen;
 	unsigned char *response, *p;
-	char *name = NULL;	/* initialized to shut gcc up */
+	char *name = NULL; /* initialized to shut gcc up */
 	int (*verifier)(char *, char *, int, struct chap_digest_type *,
-		unsigned char *, unsigned char *, char *, int);
-	char rname[MAXNAMELEN+1];
+			unsigned char *, unsigned char *, char *, int);
+	char rname[MAXNAMELEN + 1];
 
 	if ((ss->flags & LOWERUP) == 0)
 		return;
-	if (id != ss->challenge[PPP_HDRLEN+1] || len < 2)
+	if (id != ss->challenge[PPP_HDRLEN + 1] || len < 2)
 		return;
 	if (ss->flags & CHALLENGE_VALID) {
 		response = pkt;
 		GETCHAR(response_len, pkt);
-		len -= response_len + 1;	/* length of name */
-		name = (char *)pkt + response_len;
+		len -= response_len + 1; /* length of name */
+		name = (char *) pkt + response_len;
 		if (len < 0)
 			return;
 
@@ -342,9 +317,9 @@ chap_handle_response(struct chap_server_state *ss, int id,
 			verifier = chap_verify_hook;
 		else
 			verifier = chap_verify_response;
-		ok = (*verifier)(name, ss->name, id, ss->digest,
-				 ss->challenge + PPP_HDRLEN + CHAP_HDRLEN,
-				 response, ss->message, sizeof(ss->message));
+		ok = (*verifier)(name, ss->name, id, ss->digest, ss->challenge
+				+ PPP_HDRLEN + CHAP_HDRLEN, response, ss->message,
+				sizeof(ss->message));
 		if (!ok || !auth_number()) {
 			ss->flags |= AUTH_FAILED;
 			warn("Peer %q failed CHAP authentication", name);
@@ -357,7 +332,7 @@ chap_handle_response(struct chap_server_state *ss, int id,
 	MAKEHEADER(p, PPP_CHAP);
 	mlen = strlen(ss->message);
 	len = CHAP_HDRLEN + mlen;
-	p[0] = (ss->flags & AUTH_FAILED)? CHAP_FAILURE: CHAP_SUCCESS;
+	p[0] = (ss->flags & AUTH_FAILED) ? CHAP_FAILURE : CHAP_SUCCESS;
 	p[1] = id;
 	p[2] = len >> 8;
 	p[3] = len;
@@ -368,32 +343,29 @@ chap_handle_response(struct chap_server_state *ss, int id,
 	if (ss->flags & CHALLENGE_VALID) {
 		ss->flags &= ~CHALLENGE_VALID;
 		if (!(ss->flags & AUTH_DONE) && !(ss->flags & AUTH_FAILED)) {
-		    /*
-		     * Auth is OK, so now we need to check session restrictions
-		     * to ensure everything is OK, but only if we used a
-		     * plugin, and only if we're configured to check.  This
-		     * allows us to do PAM checks on PPP servers that
-		     * authenticate against ActiveDirectory, and use AD for
-		     * account info (like when using Winbind integrated with
-		     * PAM).
-		     */
-		    if (session_mgmt &&
-			session_check(name, NULL, devnam, NULL) == 0) {
-			ss->flags |= AUTH_FAILED;
-			warn("Peer %q failed CHAP Session verification", name);
-		    }
+			/*
+			 * Auth is OK, so now we need to check session restrictions
+			 * to ensure everything is OK, but only if we used a
+			 * plugin, and only if we're configured to check.  This
+			 * allows us to do PAM checks on PPP servers that
+			 * authenticate against ActiveDirectory, and use AD for
+			 * account info (like when using Winbind integrated with
+			 * PAM).
+			 */
+			if (session_mgmt && session_check(name, NULL, devnam, NULL) == 0) {
+				ss->flags |= AUTH_FAILED;
+				warn("Peer %q failed CHAP Session verification", name);
+			}
 		}
 		if (ss->flags & AUTH_FAILED) {
 			auth_peer_fail(0, PPP_CHAP);
 		} else {
 			if ((ss->flags & AUTH_DONE) == 0)
-				auth_peer_success(0, PPP_CHAP,
-						  ss->digest->code,
-						  name, strlen(name));
+				auth_peer_success(0, PPP_CHAP, ss->digest->code, name, strlen(
+						name));
 			if (chap_rechallenge_time) {
 				ss->flags |= TIMEOUT_PENDING;
-				TIMEOUT(chap_timeout, ss,
-					chap_rechallenge_time);
+				TIMEOUT(chap_timeout, ss, chap_rechallenge_time);
 			}
 		}
 		ss->flags |= AUTH_DONE;
@@ -405,24 +377,21 @@ chap_handle_response(struct chap_server_state *ss, int id,
  * what we think it should be.  Returns 1 if it does (authentication
  * succeeded), or 0 if it doesn't.
  */
-static int
-chap_verify_response(char *name, char *ourname, int id,
-		     struct chap_digest_type *digest,
-		     unsigned char *challenge, unsigned char *response,
-		     char *message, int message_space)
-{
+static int chap_verify_response(char *name, char *ourname, int id,
+		struct chap_digest_type *digest, unsigned char *challenge,
+		unsigned char *response, char *message, int message_space) {
 	int ok;
 	unsigned char secret[MAXSECRETLEN];
 	int secret_len;
 
 	/* Get the secret that the peer is supposed to know */
-	if (!get_secret(0, name, ourname, (char *)secret, &secret_len, 1)) {
+	if (!get_secret(0, name, ourname, (char *) secret, &secret_len, 1)) {
 		error("No CHAP secret found for authenticating %q", name);
 		return 0;
 	}
 
 	ok = digest->verify_response(id, name, secret, secret_len, challenge,
-				     response, message, message_space);
+			response, message, message_space);
 	memset(secret, 0, sizeof(secret));
 
 	return ok;
@@ -431,21 +400,19 @@ chap_verify_response(char *name, char *ourname, int id,
 /*
  * chap_respond - Generate and send a response to a challenge.
  */
-static void
-chap_respond(struct chap_client_state *cs, int id,
-	     unsigned char *pkt, int len)
-{
+static void chap_respond(struct chap_client_state *cs, int id,
+		unsigned char *pkt, int len) {
 	int clen, nlen;
 	int secret_len;
 	unsigned char *p;
 	unsigned char response[RESP_MAX_PKTLEN];
-	char rname[MAXNAMELEN+1];
-	char secret[MAXSECRETLEN+1];
+	char rname[MAXNAMELEN + 1];
+	char secret[MAXSECRETLEN + 1];
 
 	if ((cs->flags & (LOWERUP | AUTH_STARTED)) != (LOWERUP | AUTH_STARTED))
-		return;		/* not ready */
+		return; /* not ready */
 	if (len < 2 || len < pkt[0] + 1)
-		return;		/* too short */
+		return; /* too short */
 	clen = pkt[0];
 	nlen = len - (clen + 1);
 
@@ -458,7 +425,7 @@ chap_respond(struct chap_client_state *cs, int id,
 
 	/* get secret for authenticating ourselves with the specified host */
 	if (!get_secret(0, cs->name, rname, secret, &secret_len, 0)) {
-		secret_len = 0;	/* assume null secret if can't find one */
+		secret_len = 0; /* assume null secret if can't find one */
 		warn("No CHAP secret found for authenticating us to %q", rname);
 	}
 
@@ -466,8 +433,8 @@ chap_respond(struct chap_client_state *cs, int id,
 	MAKEHEADER(p, PPP_CHAP);
 	p += CHAP_HDRLEN;
 
-	cs->digest->make_response(p, id, cs->name, pkt,
-				  secret, secret_len, cs->priv);
+	cs->digest->make_response(p, id, cs->name, pkt, secret, secret_len,
+			cs->priv);
 	memset(secret, 0, secret_len);
 
 	clen = *p;
@@ -484,14 +451,12 @@ chap_respond(struct chap_client_state *cs, int id,
 	output(0, response, PPP_HDRLEN + len);
 }
 
-static void
-chap_handle_status(struct chap_client_state *cs, int code, int id,
-		   unsigned char *pkt, int len)
-{
+static void chap_handle_status(struct chap_client_state *cs, int code, int id,
+		unsigned char *pkt, int len) {
 	const char *msg = NULL;
 
-	if ((cs->flags & (AUTH_DONE|AUTH_STARTED|LOWERUP))
-	    != (AUTH_STARTED|LOWERUP))
+	if ((cs->flags & (AUTH_DONE | AUTH_STARTED | LOWERUP)) != (AUTH_STARTED
+			| LOWERUP))
 		return;
 	cs->flags |= AUTH_DONE;
 
@@ -523,9 +488,7 @@ chap_handle_status(struct chap_client_state *cs, int code, int id,
 	}
 }
 
-static void
-chap_input(int unit, unsigned char *pkt, int pktlen)
-{
+static void chap_input(int unit, unsigned char *pkt, int pktlen) {
 	struct chap_client_state *cs = &client;
 	struct chap_server_state *ss = &server;
 	unsigned char code, id;
@@ -554,9 +517,7 @@ chap_input(int unit, unsigned char *pkt, int pktlen)
 	}
 }
 
-static void
-chap_protrej(int unit)
-{
+static void chap_protrej(int unit) {
 	struct chap_client_state *cs = &client;
 	struct chap_server_state *ss = &server;
 
@@ -568,7 +529,7 @@ chap_protrej(int unit)
 		ss->flags = 0;
 		auth_peer_fail(0, PPP_CHAP);
 	}
-	if ((cs->flags & (AUTH_STARTED|AUTH_DONE)) == AUTH_STARTED) {
+	if ((cs->flags & (AUTH_STARTED | AUTH_DONE)) == AUTH_STARTED) {
 		cs->flags &= ~AUTH_STARTED;
 		error("CHAP authentication failed due to protocol-reject");
 		auth_withpeer_fail(0, PPP_CHAP);
@@ -578,40 +539,39 @@ chap_protrej(int unit)
 /*
  * chap_print_pkt - print the contents of a CHAP packet.
  */
-static char *chap_code_names[] = {
-	"Challenge", "Response", "Success", "Failure"
-};
+static char *chap_code_names[] = { "Challenge", "Response", "Success",
+		"Failure" };
 
 static int
 chap_print_pkt(unsigned char *p, int plen,
-	       void (*printer) __P((void *, char *, ...)), void *arg)
+		void (*printer) __P((void *, char *, ...)), void *arg)
 {
 	int code, id, len;
 	int clen, nlen;
 	unsigned char x;
 
 	if (plen < CHAP_HDRLEN)
-		return 0;
+	return 0;
 	GETCHAR(code, p);
 	GETCHAR(id, p);
 	GETSHORT(len, p);
 	if (len < CHAP_HDRLEN || len > plen)
-		return 0;
+	return 0;
 
 	if (code >= 1 && code <= sizeof(chap_code_names) / sizeof(char *))
-		printer(arg, " %s", chap_code_names[code-1]);
+	printer(arg, " %s", chap_code_names[code-1]);
 	else
-		printer(arg, " code=0x%x", code);
+	printer(arg, " code=0x%x", code);
 	printer(arg, " id=0x%x", id);
 	len -= CHAP_HDRLEN;
 	switch (code) {
-	case CHAP_CHALLENGE:
-	case CHAP_RESPONSE:
+		case CHAP_CHALLENGE:
+		case CHAP_RESPONSE:
 		if (len < 1)
-			break;
+		break;
 		clen = p[0];
 		if (len < clen + 1)
-			break;
+		break;
 		++p;
 		nlen = len - clen - 1;
 		printer(arg, " <");
@@ -622,12 +582,12 @@ chap_print_pkt(unsigned char *p, int plen,
 		printer(arg, ">, name = ");
 		print_string((char *)p, nlen, printer, arg);
 		break;
-	case CHAP_FAILURE:
-	case CHAP_SUCCESS:
+		case CHAP_FAILURE:
+		case CHAP_SUCCESS:
 		printer(arg, " ");
 		print_string((char *)p, len, printer, arg);
 		break;
-	default:
+		default:
 		for (clen = len; clen > 0; --clen) {
 			GETCHAR(x, p);
 			printer(arg, " %.2x", x);
@@ -637,20 +597,12 @@ chap_print_pkt(unsigned char *p, int plen,
 	return len + CHAP_HDRLEN;
 }
 
-struct protent chap_protent = {
-	PPP_CHAP,
-	chap_init,
-	chap_input,
-	chap_protrej,
-	chap_lowerup,
-	chap_lowerdown,
-	NULL,		/* open */
-	NULL,		/* close */
-	chap_print_pkt,
-	NULL,		/* datainput */
-	1,		/* enabled_flag */
-	"CHAP",		/* name */
-	NULL,		/* data_name */
-	chap_option_list,
-	NULL,		/* check_options */
+struct protent chap_protent = { PPP_CHAP, chap_init, chap_input, chap_protrej,
+		chap_lowerup, chap_lowerdown, NULL, /* open */
+		NULL, /* close */
+		chap_print_pkt, NULL, /* datainput */
+		1, /* enabled_flag */
+		"CHAP", /* name */
+		NULL, /* data_name */
+		chap_option_list, NULL, /* check_options */
 };

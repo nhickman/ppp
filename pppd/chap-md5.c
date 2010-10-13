@@ -42,23 +42,18 @@
 #define MD5_MIN_CHALLENGE	16
 #define MD5_MAX_CHALLENGE	24
 
-static void
-chap_md5_generate_challenge(unsigned char *cp)
-{
+static void chap_md5_generate_challenge(unsigned char *cp) {
 	int clen;
 
-	clen = (int)(drand48() * (MD5_MAX_CHALLENGE - MD5_MIN_CHALLENGE))
-		+ MD5_MIN_CHALLENGE;
+	clen = (int) (drand48() * (MD5_MAX_CHALLENGE - MD5_MIN_CHALLENGE))
+			+ MD5_MIN_CHALLENGE;
 	*cp++ = clen;
 	random_bytes(cp, clen);
 }
 
-static int
-chap_md5_verify_response(int id, char *name,
-			 unsigned char *secret, int secret_len,
-			 unsigned char *challenge, unsigned char *response,
-			 char *message, int message_space)
-{
+static int chap_md5_verify_response(int id, char *name, unsigned char *secret,
+		int secret_len, unsigned char *challenge, unsigned char *response,
+		char *message, int message_space) {
 	MD5_CTX ctx;
 	unsigned char idbyte = id;
 	unsigned char hash[MD5_HASH_SIZE];
@@ -84,34 +79,27 @@ chap_md5_verify_response(int id, char *name,
 	return 0;
 }
 
-static void
-chap_md5_make_response(unsigned char *response, int id, char *our_name,
-		       unsigned char *challenge, char *secret, int secret_len,
-		       unsigned char *private)
-{
+static void chap_md5_make_response(unsigned char *response, int id,
+		char *our_name, unsigned char *challenge, char *secret, int secret_len,
+		unsigned char *private) {
 	MD5_CTX ctx;
 	unsigned char idbyte = id;
 	int challenge_len = *challenge++;
 
 	MD5_Init(&ctx);
 	MD5_Update(&ctx, &idbyte, 1);
-	MD5_Update(&ctx, (u_char *)secret, secret_len);
+	MD5_Update(&ctx, (u_char *) secret, secret_len);
 	MD5_Update(&ctx, challenge, challenge_len);
 	MD5_Final(&response[1], &ctx);
 	response[0] = MD5_HASH_SIZE;
 }
 
-static struct chap_digest_type md5_digest = {
-	CHAP_MD5,		/* code */
-	chap_md5_generate_challenge,
-	chap_md5_verify_response,
-	chap_md5_make_response,
-	NULL,			/* check_success */
-	NULL,			/* handle_failure */
+static struct chap_digest_type md5_digest = { CHAP_MD5, /* code */
+chap_md5_generate_challenge, chap_md5_verify_response, chap_md5_make_response,
+		NULL, /* check_success */
+		NULL, /* handle_failure */
 };
 
-void
-chap_md5_init(void)
-{
+void chap_md5_init(void) {
 	chap_register_digest(&md5_digest);
 }

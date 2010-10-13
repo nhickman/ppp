@@ -462,10 +462,10 @@ lcp_lowerdown(unit)
     fsm *f = &lcp_fsm[unit];
 
     if (f->flags & DELAYED_UP) {
-	f->flags &= ~DELAYED_UP;
-	untimeout(lcp_delayed_up, f);
+		f->flags &= ~DELAYED_UP;
+		untimeout(lcp_delayed_up, f);
     } else
-	fsm_lowerdown(&lcp_fsm[unit]);
+    	fsm_lowerdown(&lcp_fsm[unit]);
 }
 
 

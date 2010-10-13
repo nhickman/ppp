@@ -17,9 +17,9 @@
 #endif
 
 typedef struct {
-    u_int32_t state[5];
-    u_int32_t count[2];
-    unsigned char buffer[64];
+	u_int32_t state[5];
+	u_int32_t count[2];
+	unsigned char buffer[64];
 } SHA1_CTX;
 
 extern void SHA1_Init(SHA1_CTX *);

@@ -33,7 +33,7 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
  * $Id: eui64.h,v 1.6 2002/12/04 23:03:32 paulus Exp $
-*/
+ */
 
 #ifndef __EUI64_H__
 #define __EUI64_H__
@@ -46,9 +46,9 @@
 #include <netinet/in.h>
 
 typedef union {
-    uint8_t	e8[8];		/* lower 64-bit IPv6 address */
-    uint32_t	e32[2];		/* lower 64-bit IPv6 address */
-} eui64_t;
+	uint8_t e8[8]; /* lower 64-bit IPv6 address */
+	uint32_t e32[2]; /* lower 64-bit IPv6 address */
+}eui64_t;
 
 /*
  * Declare the two below, since in.h only defines them when _KERNEL
@@ -64,11 +64,10 @@ typedef union {
  *
  * Maybe this should be done by processing struct in6_addr directly...
  */
-typedef union
-{
-    u_int8_t e8[8];
-    u_int16_t e16[4];
-    u_int32_t e32[2];
+typedef union {
+	u_int8_t e8[8];
+	u_int16_t e16[4];
+	u_int32_t e32[2];
 } eui64_t;
 
 #endif /* defined(SOL2) */
@@ -108,7 +107,7 @@ typedef union
 				} while (0)
 #define eui64_setlo32(e, l)	eui64_set32(e, l)
 
-char *eui64_ntoa __P((eui64_t));	/* Returns ascii representation of id */
+char *eui64_ntoa __P((eui64_t)); /* Returns ascii representation of id */
 
 #endif /* __EUI64_H__ */
 

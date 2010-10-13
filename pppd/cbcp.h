@@ -2,11 +2,11 @@
 #define CBCP_H
 
 typedef struct cbcp_state {
-    int    us_unit;	/* Interface unit number */
-    u_char us_id;		/* Current id */
-    u_char us_allowed;
-    int    us_type;
-    char   *us_number;    /* Telefone Number */
+	int us_unit; /* Interface unit number */
+	u_char us_id; /* Current id */
+	u_char us_allowed;
+	int us_type;
+	char *us_number; /* Telefone Number */
 } cbcp_state;
 
 extern cbcp_state cbcp[];

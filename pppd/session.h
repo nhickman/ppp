@@ -64,7 +64,8 @@
  * 	Zero value for failure, non-zero value for successful session verification.
  */
 int
-session_start(const int flags, const char* user, const char* passwd, const char* tty, char** msg);
+session_start(const int flags, const char* user, const char* passwd,
+		const char* tty, char** msg);
 
 /* Added these macros for convenience... */
 #define session_auth(user, pass, tty, msg) \

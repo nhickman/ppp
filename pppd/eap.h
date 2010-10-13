@@ -32,7 +32,6 @@ extern "C" {
  */
 #define	EAP_HEADERLEN	4
 
-
 /* EAP message codes. */
 #define	EAP_REQUEST	1
 #define	EAP_RESPONSE	2
@@ -79,18 +78,19 @@ extern "C" {
 #define MAX_CHALLENGE_LENGTH	24
 
 enum eap_state_code {
-	eapInitial = 0,	/* No EAP authentication yet requested */
-	eapPending,	/* Waiting for LCP (no timer) */
-	eapClosed,	/* Authentication not in use */
-	eapListen,	/* Client ready (and timer running) */
-	eapIdentify,	/* EAP Identify sent */
-	eapSRP1,	/* Sent EAP SRP-SHA1 Subtype 1 */
-	eapSRP2,	/* Sent EAP SRP-SHA1 Subtype 2 */
-	eapSRP3,	/* Sent EAP SRP-SHA1 Subtype 3 */
-	eapMD5Chall,	/* Sent MD5-Challenge */
-	eapOpen,	/* Completed authentication */
-	eapSRP4,	/* Sent EAP SRP-SHA1 Subtype 4 */
-	eapBadAuth	/* Failed authentication */
+	eapInitial = 0, /* No EAP authentication yet requested */
+	eapPending, /* Waiting for LCP (no timer) */
+	eapClosed, /* Authentication not in use */
+	eapListen, /* Client ready (and timer running) */
+	eapIdentify, /* EAP Identify sent */
+	eapSRP1, /* Sent EAP SRP-SHA1 Subtype 1 */
+	eapSRP2, /* Sent EAP SRP-SHA1 Subtype 2 */
+	eapSRP3, /* Sent EAP SRP-SHA1 Subtype 3 */
+	eapMD5Chall, /* Sent MD5-Challenge */
+	eapOpen, /* Completed authentication */
+	eapSRP4, /* Sent EAP SRP-SHA1 Subtype 4 */
+	eapBadAuth
+/* Failed authentication */
 };
 
 #define	EAP_STATES	\
@@ -103,35 +103,35 @@ enum eap_state_code {
 	 (esp)->es_server.ea_state <= eapMD5Chall)
 
 struct eap_auth {
-	char *ea_name;		/* Our name */
-	char *ea_peer;		/* Peer's name */
-	void *ea_session;	/* Authentication library linkage */
-	u_char *ea_skey;	/* Shared encryption key */
-	int ea_timeout;		/* Time to wait (for retransmit/fail) */
-	int ea_maxrequests;	/* Max Requests allowed */
-	u_short ea_namelen;	/* Length of our name */
-	u_short ea_peerlen;	/* Length of peer's name */
+	char *ea_name; /* Our name */
+	char *ea_peer; /* Peer's name */
+	void *ea_session; /* Authentication library linkage */
+	u_char *ea_skey; /* Shared encryption key */
+	int ea_timeout; /* Time to wait (for retransmit/fail) */
+	int ea_maxrequests; /* Max Requests allowed */
+	u_short ea_namelen; /* Length of our name */
+	u_short ea_peerlen; /* Length of peer's name */
 	enum eap_state_code ea_state;
-	u_char ea_id;		/* Current id */
-	u_char ea_requests;	/* Number of Requests sent/received */
-	u_char ea_responses;	/* Number of Responses */
-	u_char ea_type;		/* One of EAPT_* */
-	u_int32_t ea_keyflags;	/* SRP shared key usage flags */
+	u_char ea_id; /* Current id */
+	u_char ea_requests; /* Number of Requests sent/received */
+	u_char ea_responses; /* Number of Responses */
+	u_char ea_type; /* One of EAPT_* */
+	u_int32_t ea_keyflags; /* SRP shared key usage flags */
 };
 
 /*
  * Complete EAP state for one PPP session.
  */
 typedef struct eap_state {
-	int es_unit;			/* Interface unit number */
-	struct eap_auth es_client;	/* Client (authenticatee) data */
-	struct eap_auth es_server;	/* Server (authenticator) data */
-	int es_savedtime;		/* Saved timeout */
-	int es_rechallenge;		/* EAP rechallenge interval */
-	int es_lwrechallenge;		/* SRP lightweight rechallenge inter */
-	bool es_usepseudo;		/* Use SRP Pseudonym if offered one */
-	int es_usedpseudo;		/* Set if we already sent PN */
-	int es_challen;			/* Length of challenge string */
+	int es_unit; /* Interface unit number */
+	struct eap_auth es_client; /* Client (authenticatee) data */
+	struct eap_auth es_server; /* Server (authenticator) data */
+	int es_savedtime; /* Saved timeout */
+	int es_rechallenge; /* EAP rechallenge interval */
+	int es_lwrechallenge; /* SRP lightweight rechallenge inter */
+	bool es_usepseudo; /* Use SRP Pseudonym if offered one */
+	int es_usedpseudo; /* Set if we already sent PN */
+	int es_challen; /* Length of challenge string */
 	u_char es_challenge[MAX_CHALLENGE_LENGTH];
 } eap_state;
 

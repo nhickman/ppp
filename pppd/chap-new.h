@@ -98,13 +98,12 @@ struct chap_digest_type {
 	 * a length byte followed by the actual challenge/response data.
 	 */
 	void (*generate_challenge)(unsigned char *challenge);
-	int (*verify_response)(int id, char *name,
-		unsigned char *secret, int secret_len,
-		unsigned char *challenge, unsigned char *response,
-		char *message, int message_space);
+	int (*verify_response)(int id, char *name, unsigned char *secret,
+			int secret_len, unsigned char *challenge, unsigned char *response,
+			char *message, int message_space);
 	void (*make_response)(unsigned char *response, int id, char *our_name,
-		unsigned char *challenge, char *secret, int secret_len,
-		unsigned char *priv);
+			unsigned char *challenge, char *secret, int secret_len,
+			unsigned char *priv);
 	int (*check_success)(unsigned char *pkt, int len, unsigned char *priv);
 	void (*handle_failure)(unsigned char *pkt, int len);
 
@@ -113,9 +112,8 @@ struct chap_digest_type {
 
 /* Hook for a plugin to validate CHAP challenge */
 extern int (*chap_verify_hook)(char *name, char *ourname, int id,
-			struct chap_digest_type *digest,
-			unsigned char *challenge, unsigned char *response,
-			char *message, int message_space);
+		struct chap_digest_type *digest, unsigned char *challenge,
+		unsigned char *response, char *message, int message_space);
 
 /* Called by digest code to register a digest type */
 extern void chap_register_digest(struct chap_digest_type *);

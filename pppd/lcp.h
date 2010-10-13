@@ -86,30 +86,30 @@
  * The state of options is described by an lcp_options structure.
  */
 typedef struct lcp_options {
-    bool passive;		/* Don't die if we don't get a response */
-    bool silent;		/* Wait for the other end to start first */
-    bool restart;		/* Restart vs. exit after close */
-    bool neg_mru;		/* Negotiate the MRU? */
-    bool neg_asyncmap;		/* Negotiate the async map? */
-    bool neg_upap;		/* Ask for UPAP authentication? */
-    bool neg_chap;		/* Ask for CHAP authentication? */
-    bool neg_eap;		/* Ask for EAP authentication? */
-    bool neg_magicnumber;	/* Ask for magic number? */
-    bool neg_pcompression;	/* HDLC Protocol Field Compression? */
-    bool neg_accompression;	/* HDLC Address/Control Field Compression? */
-    bool neg_lqr;		/* Negotiate use of Link Quality Reports */
-    bool neg_cbcp;		/* Negotiate use of CBCP */
-    bool neg_mrru;		/* negotiate multilink MRRU */
-    bool neg_ssnhf;		/* negotiate short sequence numbers */
-    bool neg_endpoint;		/* negotiate endpoint discriminator */
-    int  mru;			/* Value of MRU */
-    int	 mrru;			/* Value of MRRU, and multilink enable */
-    u_char chap_mdtype;		/* which MD types (hashing algorithm) */
-    u_int32_t asyncmap;		/* Value of async map */
-    u_int32_t magicnumber;
-    int  numloops;		/* Number of loops during magic number neg. */
-    u_int32_t lqr_period;	/* Reporting period for LQR 1/100ths second */
-    struct epdisc endpoint;	/* endpoint discriminator */
+	bool passive; /* Don't die if we don't get a response */
+	bool silent; /* Wait for the other end to start first */
+	bool restart; /* Restart vs. exit after close */
+	bool neg_mru; /* Negotiate the MRU? */
+	bool neg_asyncmap; /* Negotiate the async map? */
+	bool neg_upap; /* Ask for UPAP authentication? */
+	bool neg_chap; /* Ask for CHAP authentication? */
+	bool neg_eap; /* Ask for EAP authentication? */
+	bool neg_magicnumber; /* Ask for magic number? */
+	bool neg_pcompression; /* HDLC Protocol Field Compression? */
+	bool neg_accompression; /* HDLC Address/Control Field Compression? */
+	bool neg_lqr; /* Negotiate use of Link Quality Reports */
+	bool neg_cbcp; /* Negotiate use of CBCP */
+	bool neg_mrru; /* negotiate multilink MRRU */
+	bool neg_ssnhf; /* negotiate short sequence numbers */
+	bool neg_endpoint; /* negotiate endpoint discriminator */
+	int mru; /* Value of MRU */
+	int mrru; /* Value of MRRU, and multilink enable */
+	u_char chap_mdtype; /* which MD types (hashing algorithm) */
+	u_int32_t asyncmap; /* Value of async map */
+	u_int32_t magicnumber;
+	int numloops; /* Number of loops during magic number neg. */
+	u_int32_t lqr_period; /* Reporting period for LQR 1/100ths second */
+	struct epdisc endpoint; /* endpoint discriminator */
 } lcp_options;
 
 extern fsm lcp_fsm[];
@@ -126,10 +126,10 @@ void lcp_open __P((int));
 void lcp_close __P((int, char *));
 void lcp_lowerup __P((int));
 void lcp_lowerdown __P((int));
-void lcp_sprotrej __P((int, u_char *, int));	/* send protocol reject */
+void lcp_sprotrej __P((int, u_char *, int)); /* send protocol reject */
 
 extern struct protent lcp_protent;
 
 /* Default number of times we receive our magic number from the peer
-   before deciding the link is looped-back. */
+ before deciding the link is looped-back. */
 #define DEFLOOPBACKFAIL	10

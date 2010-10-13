@@ -38,7 +38,7 @@
 #define MS_CHAP_RESPONSE_LEN	49	/* Response length for MS-CHAP */
 #define MS_CHAP2_RESPONSE_LEN	49	/* Response length for MS-CHAPv2 */
 #define MS_AUTH_RESPONSE_LENGTH	40	/* MS-CHAPv2 authenticator response, */
-					/* as ASCII */
+/* as ASCII */
 
 /* E=eeeeeeeeee error codes for MS-CHAP failure messages. */
 #define MS_CHAP_ERROR_RESTRICTED_LOGON_HOURS	646
@@ -89,19 +89,18 @@ extern void set_mppe_enc_types(int, int);
 
 void ChapMS __P((u_char *, char *, int, u_char *));
 void ChapMS2 __P((u_char *, u_char *, char *, char *, int,
-		  u_char *, u_char[MS_AUTH_RESPONSE_LENGTH+1], int));
+				u_char *, u_char[MS_AUTH_RESPONSE_LENGTH+1], int));
 #ifdef MPPE
 void mppe_set_keys __P((u_char *, u_char[MD4_SIGNATURE_SIZE]));
 void mppe_set_keys2(u_char PasswordHashHash[MD4_SIGNATURE_SIZE],
-		    u_char NTResponse[24], int IsServer);
+		u_char NTResponse[24], int IsServer);
 #endif
 
-void	ChallengeHash __P((u_char[16], u_char *, char *, u_char[8]));
+void ChallengeHash __P((u_char[16], u_char *, char *, u_char[8]));
 
 void GenerateAuthenticatorResponse(u_char PasswordHashHash[MD4_SIGNATURE_SIZE],
-			u_char NTResponse[24], u_char PeerChallenge[16],
-			u_char *rchallenge, char *username,
-			u_char authResponse[MS_AUTH_RESPONSE_LENGTH+1]);
+		u_char NTResponse[24], u_char PeerChallenge[16], u_char *rchallenge,
+		char *username, u_char authResponse[MS_AUTH_RESPONSE_LENGTH + 1]);
 
 void chapms_init(void);
 

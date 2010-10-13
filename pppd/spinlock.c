@@ -1,28 +1,28 @@
 /* 
-   Unix SMB/CIFS implementation.
+ Unix SMB/CIFS implementation.
 
-   trivial database library 
+ trivial database library
 
-   Copyright (C) Anton Blanchard                   2001
-   
-     ** NOTE! The following LGPL license applies to the tdb
-     ** library. This does NOT imply that all of Samba is released
-     ** under the LGPL
-   
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2 of the License, or (at your option) any later version.
+ Copyright (C) Anton Blanchard                   2001
 
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-   
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ ** NOTE! The following LGPL license applies to the tdb
+ ** library. This does NOT imply that all of Samba is released
+ ** under the LGPL
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -50,9 +50,9 @@ static inline int __spin_trylock(spinlock_t *lock)
 	unsigned int result;
 
 	asm volatile("ldstub    [%1], %0"
-		: "=r" (result)
-		: "r" (lock)
-		: "memory");
+			: "=r" (result)
+			: "r" (lock)
+			: "memory");
 
 	return (result == 0) ? 0 : EBUSY;
 }
@@ -80,7 +80,7 @@ static inline int __spin_trylock(spinlock_t *lock)
 	unsigned int result;
 
 	__asm__ __volatile__(
-"1:	lwarx		%0,0,%1\n\
+			"1:	lwarx		%0,0,%1\n\
 	cmpwi		0,%0,0\n\
 	li		%0,0\n\
 	bne-		2f\n\
@@ -88,9 +88,9 @@ static inline int __spin_trylock(spinlock_t *lock)
 	stwcx.		%0,0,%1\n\
 	bne-		1b\n\
 	isync\n\
-2:"	: "=&r"(result)
-	: "r"(lock)
-	: "cr0", "memory");
+2:" : "=&r"(result)
+			: "r"(lock)
+			: "cr0", "memory");
 
 	return (result == 1) ? 0 : EBUSY;
 }
@@ -118,9 +118,9 @@ static inline int __spin_trylock(spinlock_t *lock)
 	int oldval;
 
 	asm volatile("xchgl %0,%1"
-		: "=r" (oldval), "=m" (*lock)
-		: "0" (0)
-		: "memory");
+			: "=r" (oldval), "=m" (*lock)
+			: "0" (0)
+			: "memory");
 
 	return oldval > 0 ? 0 : EBUSY;
 }
@@ -159,26 +159,26 @@ static inline int __spin_is_locked(spinlock_t *lock)
 /* Returns 0 if the lock is acquired, EBUSY otherwise. */
 static inline int __spin_trylock(spinlock_t *lock)
 {
-        unsigned int val;
-        val = __lock_test_and_set(lock, 1);
-        return val == 0 ? 0 : EBUSY;
+	unsigned int val;
+	val = __lock_test_and_set(lock, 1);
+	return val == 0 ? 0 : EBUSY;
 }
 
 static inline void __spin_unlock(spinlock_t *lock)
 {
-        __lock_release(lock);
+	__lock_release(lock);
 }
 
 static inline void __spin_lock_init(spinlock_t *lock)
 {
-        __lock_release(lock);
+	__lock_release(lock);
 }
 
 /* Returns 1 if the lock is held, 0 otherwise. */
 static inline int __spin_is_locked(spinlock_t *lock)
 {
-        unsigned int val;
-        val = __add_and_fetch(lock, 0);
+	unsigned int val;
+	val = __add_and_fetch(lock, 0);
 	return val;
 }
 
@@ -189,8 +189,8 @@ static inline unsigned int load_linked(unsigned long addr)
 	unsigned int res;
 
 	__asm__ __volatile__("ll\t%0,(%1)"
-		: "=r" (res)
-		: "r" (addr));
+			: "=r" (res)
+			: "r" (addr));
 
 	return res;
 }
@@ -200,8 +200,8 @@ static inline unsigned int store_conditional(unsigned long addr, unsigned int va
 	unsigned int res;
 
 	__asm__ __volatile__("sc\t%0,(%2)"
-		: "=r" (res)
-		: "0" (value), "r" (addr));
+			: "=r" (res)
+			: "0" (value), "r" (addr));
 	return res;
 }
 
@@ -211,9 +211,9 @@ static inline int __spin_trylock(spinlock_t *lock)
 
 	do {
 		mw = load_linked(lock);
-		if (mw) 
-			return EBUSY;
-	} while (!store_conditional(lock, 1));
+		if (mw)
+		return EBUSY;
+	}while (!store_conditional(lock, 1));
 
 	asm volatile("":::"memory");
 
@@ -261,7 +261,7 @@ static void yield_cpu(void)
 static int this_is_smp(void)
 {
 #if defined(HAVE_SYSCONF) && defined(SYSCONF_SC_NPROC_ONLN)
-        return (sysconf(_SC_NPROC_ONLN) > 1) ? 1 : 0;
+	return (sysconf(_SC_NPROC_ONLN) > 1) ? 1 : 0;
 #else
 	return 0;
 #endif
@@ -280,7 +280,7 @@ static inline void __spin_lock(spinlock_t *lock)
 	while(__spin_trylock(lock)) {
 		while(__spin_is_locked(lock)) {
 			if (smp_machine && ntries++ < MAX_BUSY_LOOPS)
-				continue;
+			continue;
 			yield_cpu();
 		}
 	}
@@ -298,12 +298,12 @@ static void __read_lock(tdb_rwlock_t *rwlock)
 			__spin_unlock(&rwlock->lock);
 			return;
 		}
-	
+
 		__spin_unlock(&rwlock->lock);
 
 		while(rwlock->count & RWLOCK_BIAS) {
 			if (smp_machine && ntries++ < MAX_BUSY_LOOPS)
-				continue;
+			continue;
 			yield_cpu();
 		}
 	}
@@ -326,7 +326,7 @@ static void __write_lock(tdb_rwlock_t *rwlock)
 
 		while(rwlock->count != 0) {
 			if (smp_machine && ntries++ < MAX_BUSY_LOOPS)
-				continue;
+			continue;
 			yield_cpu();
 		}
 	}
@@ -338,7 +338,7 @@ static void __write_unlock(tdb_rwlock_t *rwlock)
 
 #ifdef DEBUG
 	if (!(rwlock->count & RWLOCK_BIAS))
-		fprintf(stderr, "bug: write_unlock\n");
+	fprintf(stderr, "bug: write_unlock\n");
 #endif
 
 	rwlock->count &= ~RWLOCK_BIAS;
@@ -351,10 +351,10 @@ static void __read_unlock(tdb_rwlock_t *rwlock)
 
 #ifdef DEBUG
 	if (!rwlock->count)
-		fprintf(stderr, "bug: read_unlock\n");
+	fprintf(stderr, "bug: read_unlock\n");
 
 	if (rwlock->count & RWLOCK_BIAS)
-		fprintf(stderr, "bug: read_unlock\n");
+	fprintf(stderr, "bug: read_unlock\n");
 #endif
 
 	rwlock->count--;
@@ -372,15 +372,15 @@ int tdb_spinlock(TDB_CONTEXT *tdb, int list, int rw_type)
 	rwlocks = (tdb_rwlock_t *)((char *)tdb->map_ptr + tdb->header.rwlocks);
 
 	switch(rw_type) {
-	case F_RDLCK:
+		case F_RDLCK:
 		__read_lock(&rwlocks[list+1]);
 		break;
 
-	case F_WRLCK:
+		case F_WRLCK:
 		__write_lock(&rwlocks[list+1]);
 		break;
 
-	default:
+		default:
 		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
 	}
 	return 0;
@@ -395,15 +395,15 @@ int tdb_spinunlock(TDB_CONTEXT *tdb, int list, int rw_type)
 	rwlocks = (tdb_rwlock_t *)((char *)tdb->map_ptr + tdb->header.rwlocks);
 
 	switch(rw_type) {
-	case F_RDLCK:
+		case F_RDLCK:
 		__read_unlock(&rwlocks[list+1]);
 		break;
 
-	case F_WRLCK:
+		case F_WRLCK:
 		__write_unlock(&rwlocks[list+1]);
 		break;
 
-	default:
+		default:
 		return TDB_ERRCODE(TDB_ERR_LOCK, -1);
 	}
 
@@ -418,7 +418,7 @@ int tdb_create_rwlocks(int fd, unsigned int hash_size)
 	size = TDB_SPINLOCK_SIZE(hash_size);
 	rwlocks = malloc(size);
 	if (!rwlocks)
-		return -1;
+	return -1;
 
 	for(i = 0; i < hash_size+1; i++) {
 		__spin_lock_init(&rwlocks[i].lock);
@@ -452,21 +452,25 @@ int tdb_clear_spinlocks(TDB_CONTEXT *tdb)
 	return 0;
 }
 #else
-int tdb_create_rwlocks(int fd, unsigned int hash_size) { return 0; }
-int tdb_spinlock(TDB_CONTEXT *tdb, int list, int rw_type) { return -1; }
-int tdb_spinunlock(TDB_CONTEXT *tdb, int list, int rw_type) { return -1; }
+int tdb_create_rwlocks(int fd, unsigned int hash_size) {
+	return 0;
+}
+int tdb_spinlock(TDB_CONTEXT *tdb, int list, int rw_type) {
+	return -1;
+}
+int tdb_spinunlock(TDB_CONTEXT *tdb, int list, int rw_type) {
+	return -1;
+}
 
 /* Non-spinlock version: remove spinlock pointer */
-int tdb_clear_spinlocks(TDB_CONTEXT *tdb)
-{
-	tdb_off off = (tdb_off)((char *)&tdb->header.rwlocks
-				- (char *)&tdb->header);
+int tdb_clear_spinlocks(TDB_CONTEXT *tdb) {
+	tdb_off off = (tdb_off)((char *) &tdb->header.rwlocks
+			- (char *) &tdb->header);
 
 	tdb->header.rwlocks = 0;
-	if (lseek(tdb->fd, off, SEEK_SET) != off
-	    || write(tdb->fd, (void *)&tdb->header.rwlocks,
-		     sizeof(tdb->header.rwlocks)) 
-	    != sizeof(tdb->header.rwlocks))
+	if (lseek(tdb->fd, off, SEEK_SET) != off || write(tdb->fd,
+			(void *) &tdb->header.rwlocks, sizeof(tdb->header.rwlocks))
+			!= sizeof(tdb->header.rwlocks))
 		return -1;
 	return 0;
 }

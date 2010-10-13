@@ -58,31 +58,31 @@
 #define NLSP			  4
 
 typedef struct ipxcp_options {
-    bool neg_node;		/* Negotiate IPX node number? */
-    bool req_node;		/* Ask peer to send IPX node number? */
+	bool neg_node; /* Negotiate IPX node number? */
+	bool req_node; /* Ask peer to send IPX node number? */
 
-    bool neg_nn;		/* Negotiate IPX network number? */
-    bool req_nn;		/* Ask peer to send IPX network number */
+	bool neg_nn; /* Negotiate IPX network number? */
+	bool req_nn; /* Ask peer to send IPX network number */
 
-    bool neg_name;		/* Negotiate IPX router name */
-    bool neg_complete;		/* Negotiate completion */
-    bool neg_router;		/* Negotiate IPX router number */
+	bool neg_name; /* Negotiate IPX router name */
+	bool neg_complete; /* Negotiate completion */
+	bool neg_router; /* Negotiate IPX router number */
 
-    bool accept_local;		/* accept peer's value for ournode */
-    bool accept_remote;		/* accept peer's value for hisnode */
-    bool accept_network;	/* accept network number */
+	bool accept_local; /* accept peer's value for ournode */
+	bool accept_remote; /* accept peer's value for hisnode */
+	bool accept_network; /* accept network number */
 
-    bool tried_nlsp;		/* I have suggested NLSP already */
-    bool tried_rip;		/* I have suggested RIP/SAP already */
+	bool tried_nlsp; /* I have suggested NLSP already */
+	bool tried_rip; /* I have suggested RIP/SAP already */
 
-    u_int32_t his_network;	/* base network number */
-    u_int32_t our_network;	/* our value for network number */
-    u_int32_t network;		/* the final network number */
+	u_int32_t his_network; /* base network number */
+	u_int32_t our_network; /* our value for network number */
+	u_int32_t network; /* the final network number */
 
-    u_char his_node[6];		/* peer's node number */
-    u_char our_node[6];		/* our node number */
-    u_char name [48];		/* name of the router */
-    int    router;		/* routing protocol */
+	u_char his_node[6]; /* peer's node number */
+	u_char our_node[6]; /* our node number */
+	u_char name[48]; /* name of the router */
+	int router; /* routing protocol */
 } ipxcp_options;
 
 extern fsm ipxcp_fsm[];

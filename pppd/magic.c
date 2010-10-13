@@ -63,32 +63,26 @@ extern void srand48 __P((long));
  * The current method uses the current hostid, current process ID
  * and current time, currently.
  */
-void
-magic_init()
-{
-    long seed;
-    struct timeval t;
+void magic_init() {
+	long seed;
+	struct timeval t;
 
-    gettimeofday(&t, NULL);
-    seed = get_host_seed() ^ t.tv_sec ^ t.tv_usec ^ getpid();
-    srand48(seed);
+	gettimeofday(&t, NULL);
+	seed = get_host_seed() ^ t.tv_sec ^ t.tv_usec ^ getpid();
+	srand48(seed);
 }
 
 /*
  * magic - Returns the next magic number.
  */
-u_int32_t
-magic()
-{
-    return (u_int32_t) mrand48();
+u_int32_t magic() {
+	return (u_int32_t) mrand48();
 }
 
 /*
  * random_bytes - Fill a buffer with random bytes.
  */
-void
-random_bytes(unsigned char *buf, int len)
-{
+void random_bytes(unsigned char *buf, int len) {
 	int i;
 
 	for (i = 0; i < len; ++i)
@@ -104,20 +98,20 @@ random_bytes(unsigned char *buf, int len)
 double
 drand48()
 {
-    return (double)random() / (double)0x7fffffffL; /* 2**31-1 */
+	return (double)random() / (double)0x7fffffffL; /* 2**31-1 */
 }
 
 long
 mrand48()
 {
-    return random();
+	return random();
 }
 
 void
 srand48(seedval)
 long seedval;
 {
-    srandom((int)seedval);
+	srandom((int)seedval);
 }
 
 #endif

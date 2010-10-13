@@ -34,28 +34,24 @@
 #include "pppd.h"
 #include "pppcrypt.h"
 
-static u_char
-Get7Bits(input, startBit)
-u_char *input;
-int startBit;
-{
+static u_char Get7Bits(input, startBit)
+	u_char *input;int startBit; {
 	unsigned int word;
 
-	word  = (unsigned)input[startBit / 8] << 8;
-	word |= (unsigned)input[startBit / 8 + 1];
+	word = (unsigned) input[startBit / 8] << 8;
+	word |= (unsigned) input[startBit / 8 + 1];
 
 	word >>= 15 - (startBit % 8 + 7);
 
 	return word & 0xFE;
 }
 
-static void
-MakeKey(key, des_key)
-u_char *key;		/* IN  56 bit DES key missing parity bits */
-u_char *des_key;	/* OUT 64 bit DES key with parity bits added */
+static void MakeKey(key, des_key)
+	u_char *key; /* IN  56 bit DES key missing parity bits */
+	u_char *des_key; /* OUT 64 bit DES key with parity bits added */
 {
-	des_key[0] = Get7Bits(key,  0);
-	des_key[1] = Get7Bits(key,  7);
+	des_key[0] = Get7Bits(key, 0);
+	des_key[1] = Get7Bits(key, 7);
 	des_key[2] = Get7Bits(key, 14);
 	des_key[3] = Get7Bits(key, 21);
 	des_key[4] = Get7Bits(key, 28);
@@ -64,7 +60,7 @@ u_char *des_key;	/* OUT 64 bit DES key with parity bits added */
 	des_key[7] = Get7Bits(key, 49);
 
 #ifndef USE_CRYPT
-	des_set_odd_parity((des_cblock *)des_key);
+	des_set_odd_parity((des_cblock *) des_key);
 #endif
 }
 
@@ -79,15 +75,15 @@ Expand(in, out)
 u_char *in;
 u_char *out;
 {
-        int j, c;
-        int i;
+	int j, c;
+	int i;
 
-        for (i = 0; i < 64; in++){
+	for (i = 0; i < 64; in++) {
 		c = *in;
-                for (j = 7; j >= 0; j--)
-                        *out++ = (c >> j) & 01;
-                i += 8;
-        }
+		for (j = 7; j >= 0; j--)
+		*out++ = (c >> j) & 01;
+		i += 8;
+	}
 }
 
 /* The inverse of Expand
@@ -97,15 +93,15 @@ Collapse(in, out)
 u_char *in;
 u_char *out;
 {
-        int j;
-        int i;
+	int j;
+	int i;
 	unsigned int c;
 
 	for (i = 0; i < 64; i += 8, out++) {
-	    c = 0;
-	    for (j = 7; j >= 0; j--, in++)
+		c = 0;
+		for (j = 7; j >= 0; j--, in++)
 		c |= *in << j;
-	    *out = c & 0xff;
+		*out = c & 0xff;
 	}
 }
 
@@ -121,14 +117,14 @@ u_char *key;
 	errno = 0;
 	setkey((const char *)crypt_key);
 	if (errno != 0)
-		return (0);
+	return (0);
 	return (1);
 }
 
 bool
 DesEncrypt(clear, cipher)
-u_char *clear;	/* IN  8 octets */
-u_char *cipher;	/* OUT 8 octets */
+u_char *clear; /* IN  8 octets */
+u_char *cipher; /* OUT 8 octets */
 {
 	u_char des_input[66];
 
@@ -136,15 +132,15 @@ u_char *cipher;	/* OUT 8 octets */
 	errno = 0;
 	encrypt((char *)des_input, 0);
 	if (errno != 0)
-		return (0);
+	return (0);
 	Collapse(des_input, cipher);
 	return (1);
 }
 
 bool
 DesDecrypt(cipher, clear)
-u_char *cipher;	/* IN  8 octets */
-u_char *clear;	/* OUT 8 octets */
+u_char *cipher; /* IN  8 octets */
+u_char *clear; /* OUT 8 octets */
 {
 	u_char des_input[66];
 
@@ -152,41 +148,37 @@ u_char *clear;	/* OUT 8 octets */
 	errno = 0;
 	encrypt((char *)des_input, 1);
 	if (errno != 0)
-		return (0);
+	return (0);
 	Collapse(des_input, clear);
 	return (1);
 }
 
 #else /* USE_CRYPT */
-static des_key_schedule	key_schedule;
+static des_key_schedule key_schedule;
 
-bool
-DesSetkey(key)
-u_char *key;
-{
+bool DesSetkey(key)
+	u_char *key; {
 	des_cblock des_key;
 	MakeKey(key, des_key);
 	des_set_key(&des_key, key_schedule);
 	return (1);
 }
 
-bool
-DesEncrypt(clear, key, cipher)
-u_char *clear;	/* IN  8 octets */
-u_char *cipher;	/* OUT 8 octets */
+bool DesEncrypt(clear, key, cipher)
+	u_char *clear; /* IN  8 octets */
+	u_char *cipher; /* OUT 8 octets */
 {
-	des_ecb_encrypt((des_cblock *)clear, (des_cblock *)cipher,
-	    key_schedule, 1);
+	des_ecb_encrypt((des_cblock *) clear, (des_cblock *) cipher, key_schedule,
+			1);
 	return (1);
 }
 
-bool
-DesDecrypt(cipher, clear)
-u_char *cipher;	/* IN  8 octets */
-u_char *clear;	/* OUT 8 octets */
+bool DesDecrypt(cipher, clear)
+	u_char *cipher; /* IN  8 octets */
+	u_char *clear; /* OUT 8 octets */
 {
-	des_ecb_encrypt((des_cblock *)cipher, (des_cblock *)clear,
-	    key_schedule, 0);
+	des_ecb_encrypt((des_cblock *) cipher, (des_cblock *) clear, key_schedule,
+			0);
 	return (1);
 }
 

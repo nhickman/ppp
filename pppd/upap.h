@@ -47,7 +47,6 @@
  */
 #define UPAP_HEADERLEN	4
 
-
 /*
  * UPAP codes.
  */
@@ -55,25 +54,23 @@
 #define UPAP_AUTHACK	2	/* Authenticate-Ack */
 #define UPAP_AUTHNAK	3	/* Authenticate-Nak */
 
-
 /*
  * Each interface is described by upap structure.
  */
 typedef struct upap_state {
-    int us_unit;		/* Interface unit number */
-    char *us_user;		/* User */
-    int us_userlen;		/* User length */
-    char *us_passwd;		/* Password */
-    int us_passwdlen;		/* Password length */
-    int us_clientstate;		/* Client state */
-    int us_serverstate;		/* Server state */
-    u_char us_id;		/* Current id */
-    int us_timeouttime;		/* Timeout (seconds) for auth-req retrans. */
-    int us_transmits;		/* Number of auth-reqs sent */
-    int us_maxtransmits;	/* Maximum number of auth-reqs to send */
-    int us_reqtimeout;		/* Time to wait for auth-req from peer */
+	int us_unit; /* Interface unit number */
+	char *us_user; /* User */
+	int us_userlen; /* User length */
+	char *us_passwd; /* Password */
+	int us_passwdlen; /* Password length */
+	int us_clientstate; /* Client state */
+	int us_serverstate; /* Server state */
+	u_char us_id; /* Current id */
+	int us_timeouttime; /* Timeout (seconds) for auth-req retrans. */
+	int us_transmits; /* Number of auth-reqs sent */
+	int us_maxtransmits; /* Maximum number of auth-reqs to send */
+	int us_reqtimeout; /* Time to wait for auth-req from peer */
 } upap_state;
-
 
 /*
  * Client states.
@@ -94,7 +91,6 @@ typedef struct upap_state {
 #define UPAPSS_LISTEN	3	/* Listening for an Authenticate */
 #define UPAPSS_OPEN	4	/* We've sent an Ack */
 #define UPAPSS_BADAUTH	5	/* We've sent a Nak */
-
 
 /*
  * Timeouts.
