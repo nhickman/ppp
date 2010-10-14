@@ -1946,6 +1946,8 @@ lcp_down(f)
     fsm *f;
 {
     lcp_options *go = &lcp_gotoptions[f->unit];
+    lcp_options *ho = &lcp_hisoptions[f->unit];
+
 
 
     lcp_echo_lowerdown(f->unit);
