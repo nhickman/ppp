@@ -1967,6 +1967,12 @@ static void
 lcp_starting(f)
     fsm *f;
 {
+    lcp_options *go = &lcp_gotoptions[f->unit];
+    lcp_options *ho = &lcp_hisoptions[f->unit];
+
+	BZERO(go, sizeof(*go));
+	BZERO(ho, sizeof(*ho));
+	
     link_required(f->unit);
 }
 
@@ -1978,14 +1984,7 @@ static void
 lcp_finished(f)
     fsm *f;
 {
-    lcp_options *go = &lcp_gotoptions[f->unit];
-    lcp_options *ho = &lcp_hisoptions[f->unit];
 
-	BZERO(go, sizeof(*go));
-
-	info("ho->negchap = %d", ho->negchap);
-	BZERO(ho, sizeof(*ho));
-	info("ho->negchap = %d", ho->negchap);
 
     link_terminated(f->unit);
 

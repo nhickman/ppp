@@ -156,6 +156,9 @@ void chap_register_digest(struct chap_digest_type *dp) {
 static void chap_lowerup(int unit) {
 	struct chap_client_state *cs = &client;
 	struct chap_server_state *ss = &server;
+	
+	memset(&client, 0, sizeof(client));
+	memset(&server, 0, sizeof(server));
 
 	cs->flags |= LOWERUP;
 	ss->flags |= LOWERUP;

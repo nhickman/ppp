@@ -209,6 +209,8 @@ static void upap_lowerup(unit)
 	int unit; {
 	upap_state *u = &upap[unit];
 
+	memset(&upap[unit], 0, sizeof(upap[unit]));
+
 	if (u->us_clientstate == UPAPCS_INITIAL)
 		u->us_clientstate = UPAPCS_CLOSED;
 	else if (u->us_clientstate == UPAPCS_PENDING) {
