@@ -811,6 +811,7 @@ void create_linkpidfile(pid)
 		if (ifname[0])
 			fprintf(pidfile, "%s\n", ifname);
 		(void) fclose(pidfile);
+		info("Link PID file (%s) created for %s.", linkpidfile, linkname);
 	} else {
 		error("Failed to create pid file %s: %m", linkpidfile);
 		linkpidfile[0] = 0;

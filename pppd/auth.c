@@ -677,7 +677,8 @@ void link_terminated(unit)
 		else
 			mp_bundle_terminated();
 	} else {
-		doing_multilink = 0;
+		if (multilink) 
+			doing_multilink = 0;
 		new_phase(PHASE_DEAD);
 	}
 }
