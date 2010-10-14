@@ -1957,8 +1957,6 @@ lcp_down(f)
 		    (go->neg_asyncmap? go->asyncmap: 0xffffffff),
 		    go->neg_pcompression, go->neg_accompression);
     peer_mru[f->unit] = PPP_MRU;
-	BZERO(ho, sizeof(*go));
-	BZERO(ho, sizeof(*ho));
 }
 
 
