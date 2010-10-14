@@ -1947,6 +1947,7 @@ lcp_down(f)
 {
     lcp_options *go = &lcp_gotoptions[f->unit];
 
+
     lcp_echo_lowerdown(f->unit);
 
     link_down(f->unit);
@@ -1956,6 +1957,8 @@ lcp_down(f)
 		    (go->neg_asyncmap? go->asyncmap: 0xffffffff),
 		    go->neg_pcompression, go->neg_accompression);
     peer_mru[f->unit] = PPP_MRU;
+	BZERO(ho, sizeof(*go));
+	BZERO(ho, sizeof(*ho));
 }
 
 
@@ -1977,7 +1980,17 @@ static void
 lcp_finished(f)
     fsm *f;
 {
+    lcp_options *go = &lcp_gotoptions[f->unit];
+    lcp_options *ho = &lcp_hisoptions[f->unit];
+
+	BZERO(go, sizeof(*go));
+
+	info("ho->negchap = %d", ho->negchap);
+	BZERO(ho, sizeof(*ho));
+	info("ho->negchap = %d", ho->negchap);
+
     link_terminated(f->unit);
+
 }
 
 
