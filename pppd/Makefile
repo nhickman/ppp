@@ -48,7 +48,7 @@ MPPE=y
 # Uncomment the next line to include support for PPP packet filtering.
 # This requires that the libpcap library and headers be installed
 # and that the kernel driver support PPP packet filtering.
-FILTER=y
+FILTER=n
 
 # Uncomment the next line to enable multilink PPP (enabled by default)
 # Linux distributions: Please leave multilink ENABLED in your builds

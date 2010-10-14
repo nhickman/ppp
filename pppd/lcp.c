@@ -1946,6 +1946,8 @@ lcp_down(f)
     fsm *f;
 {
     lcp_options *go = &lcp_gotoptions[f->unit];
+    lcp_options *ho = &lcp_hisoptions[f->unit];
+
 
     lcp_echo_lowerdown(f->unit);
 
@@ -1956,6 +1958,8 @@ lcp_down(f)
 		    (go->neg_asyncmap? go->asyncmap: 0xffffffff),
 		    go->neg_pcompression, go->neg_accompression);
     peer_mru[f->unit] = PPP_MRU;
+	BZERO(ho, sizeof(*go));
+	BZERO(ho, sizeof(*ho));
 }
 
 
